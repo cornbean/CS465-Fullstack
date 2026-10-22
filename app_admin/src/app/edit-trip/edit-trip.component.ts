@@ -81,8 +81,8 @@ public onSubmit() {
   if(this.editForm.valid){
     this.tripDataService.updateTrip(this.editForm.value)
     .subscribe( {
-      next: (updateTrip) => {
-        console.log(updateTrip);
+      next: (data: any) => {
+        console.log(data);
         this.router.navigate(['']);
       },
       error: (error: any) => {

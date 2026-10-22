@@ -90,7 +90,7 @@ const tripsAddTrip = async(req, res) => {
 const tripsUpdateTrip = async(req, res) => {
 
     // Uncomment for debugging
-    console.log(req.params);
+    // console.log(req.params);
     // console.log(req.body);
 
     const q = await Model
@@ -122,12 +122,41 @@ const tripsUpdateTrip = async(req, res) => {
 // Uncomment the following line to show results of
 operation
 // on the console
-    console.log(q);
+//    console.log(q);
+};
+
+const tripsDeleteTrip = async (req, res) => {
+    console.log("Deleting trip code:", req.params.tripCode);
+
+    try {
+        const q = await Model
+            .findOneAndDelete({ 'code': req.params.tripCode })
+            .exec();
+
+        if (!q) {
+            return res
+                .status(404)
+                .json({ "message": "Trip code not found" });
+        } else {
+            // Fetch the remaining trips from the database
+            const remainingTrips = await Model.find({}).exec();
+            
+            // Return status 200 with the full collection so Angular repaints cleanly
+            return res
+                .status(200)
+                .json(remainingTrips);
+        }
+    } catch (err) {
+        return res
+            .status(500)
+            .json(err);
+    }
 };
 
 module.exports = {
     tripsList,
     tripsFindByCode,
     tripsAddTrip,
-    tripsUpdateTrip
+    tripsUpdateTrip,
+    tripsDeleteTrip
 };

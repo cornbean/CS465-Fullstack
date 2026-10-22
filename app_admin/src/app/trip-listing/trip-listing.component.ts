@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // import { trips } from '../data/trips';
 import { TripCardComponent } from '../trip-card/trip-card.component';
@@ -21,13 +21,31 @@ export class TripListingComponent implements OnInit {
 
   constructor(
     private tripDataService: TripDataService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
     ) {
     console.log('trip-listing constructor')
   }
 
   public addTrip(): void {
     this.router.navigate(['add-trip']);
+  }
+
+  public handleDelete (tripCode: string): void {
+    this.tripDataService.deleteTrip(tripCode)
+    .subscribe({
+      next: (updatedTrips: any) => {
+        this.trips = updatedTrips;
+        this.message = updatedTrips.length > 0
+          ? `There are ${updatedTrips.length} trips available.`
+          : 'There were no trips retrieved from the database.';
+
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Error deleting trip: ' + error);
+      }
+    })
   }
 
   private getStuff(): void {
@@ -43,6 +61,7 @@ export class TripListingComponent implements OnInit {
           this.message = 'There were no trips retrieved from the database.';
         }
         console.log(this.message);
+        this.cdr.detectChanges();
       },
       error: (error: any) => {
         console.log('Error: ' + error);
