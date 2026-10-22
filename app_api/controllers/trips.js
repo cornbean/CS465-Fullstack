@@ -5,7 +5,7 @@ const Model = mongoose.model('trips');
 // GET: /trips - lists all the trips
 // Regardless of outcome, response must include HTML status code
 // and JSON message to the requesting client
-const tripsList = async(requestAnimationFrame, res) => {
+const tripsList = async(req, res) => {
     const q = await Model
         .find({}) // No filter, return all records
         .exec();
@@ -51,7 +51,112 @@ const tripsFindByCode = async(req, res) => {
     }
 };
 
+// POST: /trips - Adds a new Trip
+// Regardless of outcome, response must include HTML status code
+// and JSON message to the requesting client
+const tripsAddTrip = async(req, res) => {
+    const newTrip = new Trip({
+        code: req.body.code,
+        name: req.body.name,
+        length: req.body.length,
+        start: req.body.start,
+        resort: req.body.resort,
+        perPerson: req.body.perPerson,
+        image: req.body.image,
+        description: req.body.description
+    });
+
+    const q = await newTrip.save();
+
+        if(!q)
+        {//Database returned no data
+            return res
+                .status(400)
+                .json(err);    
+        } else { //Return new trip
+            return res
+                .status(201)
+                .json(q);
+        }
+
+        // Uncomment the following line to show results of operation
+        // on the console
+        // console.log(q);
+}
+
+// PUT: /trips/:tripCode - Adds a new Trip
+// Regardless of outcome, response must include HTML status code
+// and JSON message to the requesting client
+const tripsUpdateTrip = async(req, res) => {
+
+    // Uncomment for debugging
+    // console.log(req.params);
+    // console.log(req.body);
+
+    const q = await Model
+        .findOneAndUpdate(
+            { 'code' : req.params.tripCode },
+            {
+                code: req.body.code,
+                name: req.body.name,
+                length: req.body.length,
+                start: req.body.start,
+                resort: req.body.resort,
+                perPerson: req.body.perPerson,
+                image: req.body.image,
+                description: req.body.description
+            }, {returnDocument: 'after'}
+        )
+        .exec();
+
+        if(!q)
+        { // Database returned no data
+            return res
+                .status(400)
+                .json(err);
+        } else { // Return resulting updated trip
+            return res
+                .status(201)
+                .json(q);
+        }
+// Uncomment the following line to show results of
+operation
+// on the console
+//    console.log(q);
+};
+
+const tripsDeleteTrip = async (req, res) => {
+    console.log("Deleting trip code:", req.params.tripCode);
+
+    try {
+        const q = await Model
+            .findOneAndDelete({ 'code': req.params.tripCode })
+            .exec();
+
+        if (!q) {
+            return res
+                .status(404)
+                .json({ "message": "Trip code not found" });
+        } else {
+            // Fetch the remaining trips from the database
+            const remainingTrips = await Model.find({}).exec();
+            
+            // Return status 200 with the full collection so Angular repaints cleanly
+            return res
+                .status(200)
+                .json(remainingTrips);
+        }
+    } catch (err) {
+        return res
+            .status(500)
+            .json(err);
+    }
+};
+
 module.exports = {
     tripsList,
-    tripsFindByCode
+    tripsFindByCode,
+    tripsAddTrip,
+    tripsUpdateTrip,
+    tripsDeleteTrip
 };
