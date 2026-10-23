@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Trip } from '../models/trip';
 import { EventEmitter } from '@angular/core';
+import { AuthenticationService } from '../services/authentication';
 
 @Component({
   imports: [CommonModule],
@@ -14,7 +15,9 @@ import { EventEmitter } from '@angular/core';
 export class TripCardComponent implements OnInit {
   @Input('trip') trip: any;
   @Output() tripDeleted = new EventEmitter<string>();
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+    private authenticationService: AuthenticationService
+  ) {}
   ngOnInit(): void {
     
   }
@@ -28,6 +31,11 @@ export class TripCardComponent implements OnInit {
     if (confirm(`Are you sure you want to delete ${this.trip.name}?`)) {
       this.tripDeleted.emit(this.trip.code);
     }
+  }
+
+  public isLoggedIn()
+  {
+    return this.authenticationService.isLoggedIn();
   }
 
 }
