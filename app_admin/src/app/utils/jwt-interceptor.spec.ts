@@ -1,16 +1,30 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn } from '@angular/common/http';
-import { JwtInterceptor } from './jwt-interceptor';
+import { JwtInterceptor } from './jwt-interceptor'; // Ensure filename path matches exactly
+import { AuthenticationService } from '../services/authentication';
 
 describe('JwtInterceptor', () => {
-  const interceptor: HttpInterceptorFn = (req, next) =>
-    TestBed.runInInjectionContext(() => JwtInterceptor(req, next));
+  let interceptor: JwtInterceptor;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    // Create a bare-minimum mock configuration object for dependencies
+    const authServiceMock = {
+      isLoggedIn: () => false,
+      getToken: () => ''
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        JwtInterceptor,
+        { provide: AuthenticationService, useValue: authServiceMock }
+      ]
+    });
+
+    // Cleanly fetch the class instance out of the TestBed context wrapper
+    interceptor = TestBed.inject(JwtInterceptor);
   });
 
   it('should be created', () => {
+    // Assert the interceptor class object is successfully instantiated
     expect(interceptor).toBeTruthy();
   });
 });
