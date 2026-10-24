@@ -32,7 +32,8 @@ public onLoginSubmit(): void {
     if (!this.credentials.email || !this.credentials.password ||
           !this.credentials.name) {
       this.formError = 'All fields are required, please try again';
-      this.router.navigateByUrl('#'); // Return to login page
+      // this.router.navigateByUrl('#'); // Return to login page // Commented this out so it stays on the page for the user
+      // fix their mistake instead of taking them back to the main screen
     } else {
       this.doLogin();
     }
