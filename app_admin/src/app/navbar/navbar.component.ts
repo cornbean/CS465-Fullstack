@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthenticationService } from '../services/authentication';
-import { RouterModule } from '@angular/router';
+import { RouterModule, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   imports: [CommonModule, RouterModule],
@@ -14,17 +15,28 @@ import { RouterModule } from '@angular/router';
 export class NavbarComponent implements OnInit {
 
   constructor (
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      // Force the navbar template to run its isLoggedIn() checks again
+      this.cdr.detectChanges();
+    });
+  }
 
   public isLoggedIn(): boolean {
     return this.authenticationService.isLoggedIn();
   }
 
   public onLogout(): void {
-    return this.authenticationService.logout();
+    this.authenticationService.logout();
+    // 7. Force a check on logout as well so it changes back to 'Login' instantly
+    this.cdr.detectChanges();
   }
 
 }
