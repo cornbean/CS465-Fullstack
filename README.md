@@ -22,4 +22,3 @@ Testing
 Reflection
 •	How has this course helped you in reaching your professional goals? What skills have you learned, developed, or mastered in this course to help you become a more marketable candidate in your career field?
     o	I have enjoyed my time in this course, even during the trying times and the occasional frustration. I have learned a lot and have a better           understanding of how a simple website works and didn’t realize how much goes into it before. I will use the knowledge learned here to elevate        my skills as a Computer Science major, start my career, and build projects at home.
-<img width="468" height="634" alt="image" src="https://github.com/user-attachments/assets/a5739e32-11bd-49d5-84ce-19ff7af7c494" />
